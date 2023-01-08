@@ -1,0 +1,3 @@
+pynvml
+tensorflow
+tensorflow_datasets
