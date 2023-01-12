@@ -17,7 +17,6 @@ def nvml_context():
     nvmlShutdown()
 
 
-@lru_cache(maxsize=3)
 def _get_gpu_statuses(timestamp) -> list[GPUStatus]:
     """Returns a list of GPUStatus objects for each GPU on the system.
 
@@ -28,7 +27,11 @@ def _get_gpu_statuses(timestamp) -> list[GPUStatus]:
 
 
 def get_gpu_statuses() -> list[GPUStatus]:
-    """Returns a list of GPUStatus objects for each GPU on the system."""
+    """Returns a list of GPUStatus objects for each GPU on the system.
+
+    It is safe to call this function repeatedly, but its return values will only update once per second.  GPU status
+    results are cached using UNIX time rounded to the nearest second as the key.
+    """
     return _get_gpu_statuses(int(time.time()))
 
 
