@@ -1,12 +1,13 @@
 """Keras metrics to record GPU info during training or testing."""
 from gpu_info.nvml import get_gpu_statuses
+import tensorflow as tf
 
 
 def _gpu_metric(gpu_index, property_getter, property_name):
+    @tf.function
     def metric(y_true, y_logits):
         gpu_status = get_gpu_statuses()[gpu_index]
         return property_getter(gpu_status)
-
     metric.__name__ = f'gpu_{gpu_index}_{property_name}'
     return metric
 

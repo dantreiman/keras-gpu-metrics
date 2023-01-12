@@ -10,6 +10,39 @@ from gpu_info.nvml import get_gpu_statuses
 logger = logging.getLogger(__name__)
 
 
+class GPUMetricTrackerCallback(tf.keras.callbacks.Callback):
+    """Creates tf.tensors representing GPU status."""
+    def __init__(self, gpu_device=0):
+        """
+        :param gpu_device: Index (of list of indices) of GPU device to check temperature of.
+        """
+        self.gpu_device = gpu_device if isinstance(gpu_device, list) else [gpu_device]
+        n_devices = len(self.gpu_device)
+        self.utilization = tf.Variable(tf.zeros(n_devices), dtype=tf.float32, trainable=False)
+        self.clock_speed = tf.Variable(tf.zeros(n_devices), dtype=tf.float32, trainable=False)
+        self.temperature = tf.Variable(tf.zeros(n_devices), dtype=tf.float32, trainable=False)
+        self.memory_free = tf.Variable(tf.zeros(n_devices), dtype=tf.float32, trainable=False)
+        self.memory_used = tf.Variable(tf.zeros(n_devices), dtype=tf.float32, trainable=False)
+        self.fan_speed = tf.Variable(tf.zeros(n_devices), dtype=tf.float32, trainable=False)
+        self.power_usage = tf.Variable(tf.zeros(n_devices), dtype=tf.float32, trainable=False)
+
+    def update_state_variables(self):
+        """Checks GPU temperature, delays next batch if temp is too high."""
+        device_status = [get_gpu_statuses()[i] for i in self.gpu_device]
+        current_temperature = device_status.temperature
+        self.temperatures.append(current_temperature)
+        self.timestamps.append(device_status.timestamp)
+
+    def on_train_batch_begin(self, batch, logs=None):
+        self.check_temperature()
+
+    def on_test_batch_begin(self, batch, logs=None):
+        self.check_temperature()
+
+    def on_predict_batch_begin(self, batch, logs=None):
+        self.check_temperature()
+
+
 class TemperatureCheckCallback(tf.keras.callbacks.Callback):
     """Checks GPU temp, delays next batch if temp is too high."""
     def __init__(self, gpu_device=0, max_allowed_temp=70, sleep_seconds=10):
