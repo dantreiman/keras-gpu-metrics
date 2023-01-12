@@ -17,6 +17,7 @@ def nvml_context():
     nvmlShutdown()
 
 
+@lru_cache(maxsize=1)
 def _get_gpu_statuses(timestamp) -> list[GPUStatus]:
     """Returns a list of GPUStatus objects for each GPU on the system.
 
