@@ -11,7 +11,7 @@ This library supports two main use cases:
 ## Instantaneous Metrics
 
 ```python
-from src.keras_gpu_metrics.gpu_info.nvml import get_gpu_statuses
+from keras_gpu_metrics.gpu_info import get_gpu_statuses
 
 # Gets a list of GPUStatus objects for each available GPU device
 gpu_statuses = get_gpu_statuses()
@@ -44,7 +44,7 @@ list of callbacks passed to the `fit` method of a Keras model.  Metrics are upda
 by using the metrics provided by the callback.
 
 ```python
-from src.keras_gpu_metrics.keras_gpu_callbacks import GPUMetricTrackerCallback
+from keras_gpu_metrics import GPUMetricTrackerCallback
 
 # GPUMetricTrackerCallback is needed to update variables so that metrics (which are part of the tensorflow graph) can
 # receive updated GPU info.
