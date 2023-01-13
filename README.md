@@ -2,11 +2,64 @@
 
 Keras callbacks and metrics for tracking GPU utilization, temperature, and power consumption.
 
-Supports nvidia GPUs only through the pynvml library, a python wrapper for NVIDIA Management Library (NVML) APIs.
+Supports nvidia GPUs only through the [nvidia-ml-py](https://pypi.org/project/nvidia-ml-py/) library,
+a python wrapper for NVIDIA Management Library (NVML) APIs.
 
 This library supports two main use cases:
 - [Instantaneous metrics](#instantaneous-metrics): GPU utilization, temperature, and power consumption
 - [Metric Tracking](#metric-tracking) during a training session
+
+Example notebooks:
+- [GPU Info](gpu_info.ipynb) [![GPU Info](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dantreiman/
+keras-gpu-metrics/gpu_info.ipynb): Basic example code to get current GPU status.
+- [GPU Metrics](gpu_metrics_example.ipynb) [![GPU Info](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dantreiman/
+keras-gpu-metrics/gpu_metrics_example.ipynb): Track GPU metrics during training a tensorflow model.
+- [Energy Usage](energy_usage_example.ipynb) [![GPU Info](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dantreiman/
+keras-gpu-metrics/energy_usage_example.ipynb): Demonstrates estimation of GPU energy usage while training a tensorflow model.
+
+## APIs
+
+### get_gpu_statuses()
+
+```python
+def get_gpu_statuses() -> List[GPUStatus]:
+```
+Returns a list of GPUStatus objects, one for each GPU on the system.
+
+Usage:
+```python
+from keras_gpu_metrics import get_gpu_statuses
+
+# Gets a list of GPUStatus objects for each available GPU device
+gpu_statuses = get_gpu_statuses()
+```
+
+Returns:
+
+`List[GPUStatus]`: A list of GPUStatus objects, one for each GPU on the system.
+
+```python
+@dataclass
+class GPUStatus:
+    timestamp: int        # UNIX timestamp (seconds) of this measurement
+    gpu_id: int           # Integer ID of the GPU
+    device_name: str      # Name of the GPU i.e. 'NVIDIA GeForce RTX 3090'
+    pids: List[int]       # List of process IDs using the GPU
+    utilization: int      # GPU utilization percentage
+    clock_speed_mhz: int  # GPU clock speed in MHz
+    temperature: int      # GPU temperature in Celsius
+    memory_free: int      # Free GPU memory usage in bytes
+    memory_used: int      # Used GPU memory usage in bytes
+    fan_speed: int        # Fan speed percentage
+    power_usage_mw: int   # Power usage in milliwatts
+```
+
+### 
+
+
+###
+
+### 
 
 ## Instantaneous Metrics
 
@@ -39,15 +92,16 @@ Power Usage: 21824 mW
 
 ## Metric Tracking
 
-Metric tracking is supported using a Keras callback (GPUMetricTrackerCallback).  This callback should be added to the
-list of callbacks passed to the `fit` method of a Keras model.  Metrics are updated on each batch and can be tracked
-by using the metrics provided by the callback.
+Tracking GPU stats as training metrics is supported using a Keras callback (GPUMetricTrackerCallback).
+This callback should be added to the list of callbacks passed to the `fit` method of a Keras model.
+Metric values are updated at the start of each batch and can be tracked by using the metric functions
+provided by the callback object.
 
 ```python
 from keras_gpu_metrics import GPUMetricTrackerCallback
 
-# GPUMetricTrackerCallback is needed to update variables so that metrics (which are part of the tensorflow graph) can
-# receive updated GPU info.
+# GPUMetricTrackerCallback is needed to update variables so that metrics
+# (which are part of the tensorflow graph) can receive updated GPU info.
 gpu_tracker_callback = GPUMetricTrackerCallback()
 
 metrics = [
@@ -63,5 +117,12 @@ model.compile(
     optimizer=tf.keras.optimizers.Adam(0.001),
     loss=tf.keras.losses.BinaryCrossentropy(from_logits=False),
     metrics=metrics
+)
+
+history = model.fit(
+    dataset,
+    epochs=10,
+    validation_data=dataset,
+    callbacks=[gpu_tracker_callback]
 )
 ```
