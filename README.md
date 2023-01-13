@@ -16,7 +16,7 @@ This library supports two main use cases:
 [<img src="https://colab.research.google.com/assets/colab-badge.svg">](https://colab.research.google.com/github/dantreiman/keras-gpu-metrics/gpu_info.ipynb)
 Basic example code to get current GPU status.
 
-###[GPU Metrics](gpu_metrics_example.ipynb)
+### [GPU Metrics](gpu_metrics_example.ipynb)
 [<img src="https://colab.research.google.com/assets/colab-badge.svg">](https://colab.research.google.com/github/dantreiman/keras-gpu-metrics/gpu_metrics_example.ipynb)
 Track GPU utilization, temperature, and power consumption during training of a tensorflow model.
 
