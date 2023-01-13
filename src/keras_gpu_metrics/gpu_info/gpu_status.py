@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 from typing import List
 
 
@@ -15,3 +16,18 @@ class GPUStatus:
     memory_used: int      # Used GPU memory usage in bytes
     fan_speed: int        # Fan speed percentage
     power_usage_mw: int   # Power usage in milliwatts
+
+    def __str__(self):
+        dt_object = datetime.fromtimestamp(self.timestamp)
+        return (
+            f'Status of GPU {self.gpu_id} at timestamp {self.timestamp} ({str(dt_object)})\n'
+            f'Device Name: {self.device_name}\n'
+            f'PIDs:        {self.pids}\n'
+            f'Utilization: {self.utilization}%\n'
+            f'Clock Speed: {self.clock_speed_mhz} MHz\n'
+            f'Temperature: {self.temperature} C\n'
+            f'Memory Free: {self.memory_free} bytes\n'
+            f'Memory Used: {self.memory_used} bytes\n'
+            f'Fan Speed:   {self.fan_speed}%\n'
+            f'Power Usage: {self.power_usage_mw} mW'
+        )

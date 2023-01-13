@@ -5,7 +5,7 @@ import tensorflow as tf
 import time
 from typing import List
 
-from gpu_info.nvml import get_gpu_statuses
+from src.keras_gpu_metrics.gpu_info.nvml import get_gpu_statuses
 
 logger = logging.getLogger(__name__)
 
