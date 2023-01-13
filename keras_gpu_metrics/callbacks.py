@@ -5,7 +5,7 @@ import tensorflow as tf
 import time
 from typing import List
 
-from gpu_info.nvml import get_gpu_statuses
+from keras_gpu_metrics.gpu_info.nvml import get_gpu_statuses
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +25,7 @@ class GPUMetricTrackerCallback(tf.keras.callbacks.Callback):
         self.memory_used = tf.Variable(tf.zeros(n_devices), dtype=tf.float32, trainable=False)
         self.fan_speed = tf.Variable(tf.zeros(n_devices), dtype=tf.float32, trainable=False)
         self.power_usage = tf.Variable(tf.zeros(n_devices), dtype=tf.float32, trainable=False)
+        self.update_state_variables()
 
     def update_state_variables(self):
         """Checks GPU temperature, delays next batch if temp is too high."""
