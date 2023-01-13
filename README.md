@@ -1,5 +1,6 @@
 # keras-gpu-metrics
 
+
 Keras callbacks and metrics for tracking GPU utilization, temperature, and power consumption.
 
 Supports nvidia GPUs only through the [nvidia-ml-py](https://pypi.org/project/nvidia-ml-py/) library,
@@ -9,13 +10,23 @@ This library supports two main use cases:
 - [Instantaneous metrics](#instantaneous-metrics): GPU utilization, temperature, and power consumption
 - [Metric Tracking](#metric-tracking) during a training session
 
-Example notebooks:
-- [GPU Info](gpu_info.ipynb) [![GPU Info](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dantreiman/
-keras-gpu-metrics/gpu_info.ipynb): Basic example code to get current GPU status.
-- [GPU Metrics](gpu_metrics_example.ipynb) [![GPU Info](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dantreiman/
-keras-gpu-metrics/gpu_metrics_example.ipynb): Track GPU metrics during training a tensorflow model.
-- [Energy Usage](energy_usage_example.ipynb) [![GPU Info](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dantreiman/
-keras-gpu-metrics/energy_usage_example.ipynb): Demonstrates estimation of GPU energy usage while training a tensorflow model.
+## Example notebooks:
+
+### [GPU Info](gpu_info.ipynb)
+[![GPU Info](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dantreiman/
+keras-gpu-metrics/gpu_info.ipynb)
+Basic example code to get current GPU status.
+
+###[GPU Metrics](gpu_metrics_example.ipynb)
+[![GPU Metrics](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dantreiman/
+keras-gpu-metrics/gpu_metrics_example.ipynb)
+Track GPU utilization, temperature, and power consumption during training of a tensorflow model.
+
+### [Energy Usage](energy_usage_example.ipynb)
+[![Energy Usage](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dantreiman/
+keras-gpu-metrics/energy_usage_example.ipynb)
+
+Demonstrates estimation of total GPU energy usage for training and testing a tensorflow model.
 
 ## APIs
 
