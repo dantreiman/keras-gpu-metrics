@@ -40,10 +40,10 @@ Demonstrates estimation of total GPU energy usage for training and testing a ten
 
 ## API Reference
 
-- [get_gpu_statuses](#get-gpu-statuses)
-- [GPUMetricTrackerCallback](#gpu-metric-tracker-callback)
-- [PowerMonitorCallback](#power-monitor-callback)
-- [TemperatureCheckCallback](#temperature-check-callback)
+- [get_gpu_statuses](#get_gpu_statuses)
+- [GPUMetricTrackerCallback](#gpumetrictrackercallback)
+- [PowerMonitorCallback](#powermonitorcallback)
+- [TemperatureCheckCallback](#temperaturecheckcallback)
 
 ### get_gpu_statuses
 
