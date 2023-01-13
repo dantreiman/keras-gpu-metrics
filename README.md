@@ -10,7 +10,15 @@ This library supports two main use cases:
 - [Instantaneous metrics](#instantaneous-metrics): GPU utilization, temperature, and power consumption
 - [Metric Tracking](#metric-tracking) during a training session
 
-## Example notebooks:
+
+## Installation
+
+```bash
+pip install keras-gpu-metrics
+```
+
+
+## Examples:
 
 ### [GPU Info](gpu_info.ipynb)
 
@@ -30,9 +38,14 @@ Demonstrates estimation of total GPU energy usage for training and testing a ten
 [<img src="https://colab.research.google.com/assets/colab-badge.svg">](https://colab.research.google.com/github/dantreiman/keras-gpu-metrics/blob/main/energy_usage_example.ipynb)
 
 
-## APIs
+## API Reference
 
-### get_gpu_statuses()
+- [get_gpu_statuses](#get-gpu-statuses)
+- [GPUMetricTrackerCallback](#gpu-metric-tracker-callback)
+- [PowerMonitorCallback](#power-monitor-callback)
+- [TemperatureCheckCallback](#temperature-check-callback)
+
+### get_gpu_statuses
 
 ```python
 def get_gpu_statuses() -> List[GPUStatus]:
@@ -67,12 +80,12 @@ class GPUStatus:
     power_usage_mw: int   # Power usage in milliwatts
 ```
 
-### 
+### GPUMetricTrackerCallback
 
 
-###
+### PowerMonitorCallback
 
-### 
+### TemperatureCheckCallback
 
 ## Instantaneous Metrics
 
