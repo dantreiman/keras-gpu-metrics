@@ -13,18 +13,15 @@ This library supports two main use cases:
 ## Example notebooks:
 
 ### [GPU Info](gpu_info.ipynb)
-[<img src="https://colab.research.google.com/assets/colab-badge.svg">](https://colab.research.google.com/github/dantreiman/
-keras-gpu-metrics/gpu_info.ipynb)
+[<img src="https://colab.research.google.com/assets/colab-badge.svg">](https://colab.research.google.com/github/dantreiman/keras-gpu-metrics/gpu_info.ipynb)
 Basic example code to get current GPU status.
 
 ###[GPU Metrics](gpu_metrics_example.ipynb)
-[<img src="https://colab.research.google.com/assets/colab-badge.svg">](https://colab.research.google.com/github/dantreiman/
-keras-gpu-metrics/gpu_metrics_example.ipynb)
+[<img src="https://colab.research.google.com/assets/colab-badge.svg">](https://colab.research.google.com/github/dantreiman/keras-gpu-metrics/gpu_metrics_example.ipynb)
 Track GPU utilization, temperature, and power consumption during training of a tensorflow model.
 
 ### [Energy Usage](energy_usage_example.ipynb)
-[<img src="https://colab.research.google.com/assets/colab-badge.svg">](https://colab.research.google.com/github/dantreiman/
-keras-gpu-metrics/energy_usage_example.ipynb)
+[<img src="https://colab.research.google.com/assets/colab-badge.svg">](https://colab.research.google.com/github/dantreiman/keras-gpu-metrics/energy_usage_example.ipynb)
 
 Demonstrates estimation of total GPU energy usage for training and testing a tensorflow model.
 
