@@ -50,23 +50,23 @@ def _get_gpu_status(device_index: int, timestamp: int) -> GPUStatus:
     except nv.NVMLError:
         utilization = None
 
-    clock_mhz = nv.nvmlDeviceGetClockInfo(handle, nv.NVML_CLOCK_SM)
+    clock_speed_mhz = nv.nvmlDeviceGetClockInfo(handle, nv.NVML_CLOCK_SM)
     temperature = nv.nvmlDeviceGetTemperature(handle, nv.NVML_TEMPERATURE_GPU)
     memory = nv.nvmlDeviceGetMemoryInfo(handle)  # free, reserved, total, used
     fan_speed = nv.nvmlDeviceGetFanSpeed(handle)
-    power_usage = nv.nvmlDeviceGetPowerUsage(handle)  # milliwatts
+    power_usage_mw = nv.nvmlDeviceGetPowerUsage(handle)  # milliwatts
     return GPUStatus(
         timestamp=timestamp,
         gpu_id=device_index,
         device_name=device_name,
         pids=pids,
         utilization=utilization,
-        clock_mhz=clock_mhz,
+        clock_speed_mhz=clock_speed_mhz,
         temperature=temperature,
         memory_free=memory.free,
         memory_used=memory.used,
         fan_speed=fan_speed,
-        power_usage=power_usage,
+        power_usage_mw=power_usage_mw,
     )
 
 
