@@ -12,12 +12,12 @@ logger = logging.getLogger(__name__)
 
 class GPUMetricTrackerCallback(tf.keras.callbacks.Callback):
     """Creates tf.tensors representing GPU status."""
-    def __init__(self, gpu_device=0):
+    def __init__(self, gpu_devices=0):
         """
-        :param gpu_device: Index (of list of indices) of GPU device to check temperature of.
+        :param gpu_devices: Index (of list of indices) of GPU device to check temperature of.
         """
-        self.gpu_device = gpu_device if isinstance(gpu_device, list) else [gpu_device]
-        n_devices = len(self.gpu_device)
+        self.gpu_devices = gpu_devices if isinstance(gpu_devices, list) else [gpu_devices]
+        n_devices = len(self.gpu_devices)
         self.utilization = tf.Variable(tf.zeros(n_devices), dtype=tf.float32, trainable=False)
         self.clock_speed = tf.Variable(tf.zeros(n_devices), dtype=tf.float32, trainable=False)
         self.temperature = tf.Variable(tf.zeros(n_devices), dtype=tf.float32, trainable=False)
@@ -28,19 +28,55 @@ class GPUMetricTrackerCallback(tf.keras.callbacks.Callback):
 
     def update_state_variables(self):
         """Checks GPU temperature, delays next batch if temp is too high."""
-        device_status = [get_gpu_statuses()[i] for i in self.gpu_device]
-        current_temperature = device_status.temperature
-        self.temperatures.append(current_temperature)
-        self.timestamps.append(device_status.timestamp)
+        device_statuses = [get_gpu_statuses()[i] for i in self.gpu_devices]
+        self.utilization.assign([s.utilization for s in device_statuses])
+        self.clock_speed.assign([s.clock_speed_mhz for s in device_statuses])
+        self.temperature.assign([s.temperature for s in device_statuses])
+        self.memory_free.assign([s.memory_free for s in device_statuses])
+        self.memory_used.assign([s.memory_used for s in device_statuses])
+        self.fan_speed.assign([s.fan_speed for s in device_statuses])
+        self.power_usage.assign([s.power_usage_mw for s in device_statuses])
 
     def on_train_batch_begin(self, batch, logs=None):
-        self.check_temperature()
+        self.update_state_variables()
 
     def on_test_batch_begin(self, batch, logs=None):
-        self.check_temperature()
+        self.update_state_variables()
 
     def on_predict_batch_begin(self, batch, logs=None):
-        self.check_temperature()
+        self.update_state_variables()
+
+    def _gpu_metric(self, gpu_index, property_name):
+        variable = getattr(self, property_name)
+
+        def metric(y_true, y_logits):
+            return tf.py_function(
+                lambda y: variable[gpu_index], inp=[y_logits], Tout=tf.float32, name=f'gpu_{gpu_index}_{property_name}'
+            )
+
+        metric.__name__ = f'gpu_{gpu_index}_{property_name}'
+        return metric
+
+    def utilization_metric(self, gpu_index: int = 0):
+        return self._gpu_metric(gpu_index, 'utilization')
+
+    def clock_speed_metric(self, gpu_index: int = 0):
+        return self._gpu_metric(gpu_index, 'clock_speed')
+
+    def temperature_metric(self, gpu_index: int = 0):
+        return self._gpu_metric(gpu_index, 'temperature')
+
+    def memory_free_metric(self, gpu_index: int = 0):
+        return self._gpu_metric(gpu_index, 'memory_free')
+
+    def memory_used_metric(self, gpu_index: int = 0):
+        return self._gpu_metric(gpu_index, 'memory_used')
+
+    def fan_speed_metric(self, gpu_index: int = 0):
+        return self._gpu_metric(gpu_index, 'fan_speed')
+
+    def power_usage_metric(self, gpu_index: int = 0):
+        return self._gpu_metric(gpu_index, 'power_usage')
 
 
 class TemperatureCheckCallback(tf.keras.callbacks.Callback):
