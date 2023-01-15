@@ -3,6 +3,7 @@ from functools import lru_cache
 import pynvml as nv
 from pynvml import nvmlInit, nvmlShutdown
 import time
+from typing import List
 
 from .gpu_status import GPUStatus
 
@@ -18,7 +19,7 @@ def nvml_context():
 
 
 @lru_cache(maxsize=1)
-def _get_gpu_statuses(timestamp) -> list[GPUStatus]:
+def _get_gpu_statuses(timestamp) -> List[GPUStatus]:
     """Returns a list of GPUStatus objects for each GPU on the system.
 
     Caches its results to avoid calling nvmlInit/nvmShutdown multiple times per batch.
@@ -27,7 +28,7 @@ def _get_gpu_statuses(timestamp) -> list[GPUStatus]:
         return [_get_gpu_status(i, timestamp) for i in range(_get_num_gpus())]
 
 
-def get_gpu_statuses() -> list[GPUStatus]:
+def get_gpu_statuses() -> List[GPUStatus]:
     """Returns a list of GPUStatus objects for each GPU on the system.
 
     It is safe to call this function repeatedly, but its return values will only update once per second.  GPU status
@@ -42,9 +43,17 @@ def _get_gpu_status(device_index: int, timestamp: int) -> GPUStatus:
     Returns (GPUStatus): The status of the GPU device.
     """
     handle = nv.nvmlDeviceGetHandleByIndex(device_index)
-    device_name = nv.nvmlDeviceGetName(handle).decode('UTF-8')
-    nv_procs = nv.nvmlDeviceGetComputeRunningProcesses(handle)
-    pids = [p.pid for p in nv_procs]
+    device_name_data = nv.nvmlDeviceGetName(handle)
+    try:
+        device_name = device_name_data.decode('utf-8')
+    except (UnicodeDecodeError, AttributeError):
+        device_name = str(device_name_data)
+    
+    try:
+        nv_procs = nv.nvmlDeviceGetComputeRunningProcesses(handle)
+        pids = [p.pid for p in nv_procs]
+    except nv.NVMLError:
+        pids = None
     try:
         utilization = nv.nvmlDeviceGetUtilizationRates(handle).gpu
     except nv.NVMLError:
@@ -53,7 +62,10 @@ def _get_gpu_status(device_index: int, timestamp: int) -> GPUStatus:
     clock_speed_mhz = nv.nvmlDeviceGetClockInfo(handle, nv.NVML_CLOCK_SM)
     temperature = nv.nvmlDeviceGetTemperature(handle, nv.NVML_TEMPERATURE_GPU)
     memory = nv.nvmlDeviceGetMemoryInfo(handle)  # free, reserved, total, used
-    fan_speed = nv.nvmlDeviceGetFanSpeed(handle)
+    try:
+        fan_speed = nv.nvmlDeviceGetFanSpeed(handle)
+    except nv.NVMLError:
+        fan_speed = None
     power_usage_mw = nv.nvmlDeviceGetPowerUsage(handle)  # milliwatts
     return GPUStatus(
         timestamp=timestamp,
