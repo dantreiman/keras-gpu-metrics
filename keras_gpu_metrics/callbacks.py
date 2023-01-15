@@ -121,7 +121,7 @@ class TemperatureCheckCallback(tf.keras.callbacks.Callback):
 
 @dataclass
 class PowerUsageHistory:
-    """Parallel arrays which store the power usage for each batch."""
+    """Parallel arrays which store the power usage (in milliwatts) recorded at the end of each batch."""
     batch_index: List[int] = field(default_factory=list)
     batch_begin_time: List[float] = field(default_factory=list)
     batch_end_time: List[float] = field(default_factory=list)
@@ -160,17 +160,17 @@ class PowerMonitorCallback(tf.keras.callbacks.Callback):
         self.test_power_usage = PowerUsageHistory()
         self.predict_power_usage = PowerUsageHistory()
 
-    def total_power(self):
+    def total_power_mw(self):
         """Get instantaneous total GPU power usage."""
         device_statuses = get_gpu_statuses()
-        return sum(device_statuses[i].power_usage for i in self.gpu_devices)
+        return sum(device_statuses[i].power_usage_mw for i in self.gpu_devices)
 
     def on_train_batch_begin(self, batch, logs=None):
         self.train_power_usage.batch_index.append(batch)
         self.train_power_usage.batch_begin_time.append(time.time_ns())
 
     def on_train_batch_end(self, batch, logs=None):
-        self.train_power_usage.power_usage.append(self.total_power())
+        self.train_power_usage.power_usage.append(self.total_power_mw())
         self.train_power_usage.batch_end_time.append(time.time_ns())
 
     def on_test_batch_begin(self, batch, logs=None):
@@ -178,7 +178,7 @@ class PowerMonitorCallback(tf.keras.callbacks.Callback):
         self.test_power_usage.batch_begin_time.append(time.time_ns())
 
     def on_test_batch_end(self, batch, logs=None):
-        self.test_power_usage.power_usage.append(self.total_power())
+        self.test_power_usage.power_usage.append(self.total_power_mw())
         self.test_power_usage.batch_end_time.append(time.time_ns())
 
     def on_predict_batch_begin(self, batch, logs=None):
@@ -186,5 +186,5 @@ class PowerMonitorCallback(tf.keras.callbacks.Callback):
         self.predict_power_usage.batch_begin_time.append(time.time_ns())
 
     def on_predict_batch_end(self, batch, logs=None):
-        self.predict_power_usage.power_usage.append(self.total_power())
+        self.predict_power_usage.power_usage.append(self.total_power_mw())
         self.predict_power_usage.batch_end_time.append(time.time_ns())

@@ -120,7 +120,7 @@ Power Usage: 21824 mW
 
 Tracking GPU stats as training metrics is supported using a Keras callback (GPUMetricTrackerCallback).
 This callback should be added to the list of callbacks passed to the `fit` method of a Keras model.
-Metric values are updated at the start of each batch and can be tracked by using the metric functions
+Metric values are updated at the end of training for each batch and can be tracked by using the metric functions
 provided by the callback object.
 
 ```python
