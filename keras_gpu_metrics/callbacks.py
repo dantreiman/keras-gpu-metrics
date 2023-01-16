@@ -30,13 +30,17 @@ class GPUMetricTrackerCallback(tf.keras.callbacks.Callback):
     def update_state_variables(self):
         """Checks GPU temperature, delays next batch if temp is too high."""
         device_statuses = [get_gpu_statuses()[i] for i in self.gpu_devices]
-        self.utilization.assign([s.utilization for s in device_statuses])
-        self.clock_speed.assign([s.clock_speed_mhz for s in device_statuses])
-        self.temperature.assign([s.temperature for s in device_statuses])
-        self.memory_free.assign([s.memory_free for s in device_statuses])
-        self.memory_used.assign([s.memory_used for s in device_statuses])
-        self.fan_speed.assign([s.fan_speed for s in device_statuses])
-        self.power_usage.assign([s.power_usage_mw for s in device_statuses])
+        
+        def replace_none(x):
+            return -1 if x is None else x
+        
+        self.utilization.assign([replace_none(s.utilization) for s in device_statuses])
+        self.clock_speed.assign([replace_none(s.clock_speed_mhz) for s in device_statuses])
+        self.temperature.assign([replace_none(s.temperature) for s in device_statuses])
+        self.memory_free.assign([replace_none(s.memory_free) for s in device_statuses])
+        self.memory_used.assign([replace_none(s.memory_used) for s in device_statuses])
+        self.fan_speed.assign([replace_none(s.fan_speed) for s in device_statuses])
+        self.power_usage.assign([replace_none(s.power_usage_mw) for s in device_statuses])
 
     def on_train_batch_begin(self, batch, logs=None):
         self.update_state_variables()
@@ -52,7 +56,7 @@ class GPUMetricTrackerCallback(tf.keras.callbacks.Callback):
 
         def metric(y_true, y_logits):
             return tf.py_function(
-                lambda y: variable[gpu_index], inp=[y_logits], Tout=tf.float32, name=f'gpu_{gpu_index}_{property_name}'
+                lambda v: v[gpu_index], inp=[variable], Tout=tf.float32, name=f'gpu_{gpu_index}_{property_name}'
             )
 
         metric.__name__ = f'gpu_{gpu_index}_{property_name}'
