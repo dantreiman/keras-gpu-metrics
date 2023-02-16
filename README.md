@@ -18,9 +18,11 @@ pip install keras-gpu-metrics
 ```
 
 
-## Examples:
+## Example Use Cases:
 
-### [GPU Info](gpu_info.ipynb)
+### [Instantaneous GPU Metrics](docs/GPUMetricInstant.md)
+
+[GPU Info](gpu_info.ipynb)
 
 Basic example code to get current GPU status.
 [<img src="https://colab.research.google.com/assets/colab-badge.svg">](https://colab.research.google.com/github/dantreiman/keras-gpu-metrics/blob/main/gpu_info.ipynb)
